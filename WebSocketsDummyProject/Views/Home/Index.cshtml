@@ -1,0 +1,542 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2>ChatApp</h2>
+
+
+
+
+<div id="usernameSetup" class="username-container">
+    <div class="username-box">
+        <input type="text" id="usernameInput" placeholder="Enter your name..." />
+        <button onclick="setUsername()">Start Chatting</button>
+    </div>
+</div>
+
+<div class="chat-container" style="display: none;" id="chatContainer">
+    <div class="chat-messages" id="messagesList"></div>
+    <div class="chat-input">
+        <div class="emoji-picker-container">
+            <button class="emoji-trigger" onclick="toggleEmojiPicker()">😊</button>
+            <div class="emoji-picker" id="emojiPicker" style="display: none;"></div>
+        </div>
+        <input type="text" id="messageInput" placeholder="Enter your message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+
+<style>
+    .username-container {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #f9f9f9;
+        text-align: center;
+    }
+
+    .username-box {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+        .username-box input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .username-box button {
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+            .username-box button:hover {
+                background: #0069d9;
+            }
+
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-messages {
+        height: 500px;
+        overflow-y: auto;
+        padding: 10px;
+        background: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        background: #fff;
+        border-top: 1px solid #ddd;
+    }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .chat-input button {
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+            .chat-input button:hover {
+                background: #0069d9;
+            }
+
+    #messagesList {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+        #messagesList li.your-message {
+            align-self: flex-end;
+            background: #007bff;
+            color: white;
+            border-radius: 18px 18px 0 18px;
+            padding: 8px 16px;
+            max-width: 80%;
+            min-width: 20%;
+            line-height: 1.2;
+        }
+
+        #messagesList li.other-message {
+            align-self: flex-start;
+            background: #e9ecef;
+            color: #212529;
+            border-radius: 18px 18px 18px 0;
+            padding: 8px 16px;
+            max-width: 80%;
+            min-width: 20%;
+            line-height: 1.2;
+        }
+
+        #messagesList li.system-message {
+            align-self: center;
+            background: #fff8e1;
+            color: #856404;
+            border-radius: 4px;
+            padding: 6px 16px;
+            max-width: 90%;
+            font-style: italic;
+            font-size: 0.85em;
+            line-height: 1.2;
+            margin: 4px 0;
+        }
+
+    .message-sender {
+        font-weight: bold;
+        font-size: 0.75em;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .your-message .message-sender {
+        color: #e3f2fd;
+    }
+
+    .other-message .message-sender {
+        color: #495057;
+    }
+
+    .message-time {
+        font-size: 0.65em;
+        opacity: 0.7;
+        display: block;
+        text-align: right;
+        margin-top: 2px;
+    }
+
+
+    .emoji-picker-container {
+        position: relative;
+    }
+
+    .emoji-trigger {
+        padding: 8px 12px;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .emoji-picker {
+        position: absolute;
+        bottom: 40px;
+        left: 0;
+        width: 250px;
+        height: 200px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        overflow-y: auto;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 100;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 5px;
+    }
+
+        .emoji-picker span {
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            text-align: center;
+        }
+
+            .emoji-picker span:hover {
+                background: #f0f0f0;
+                border-radius: 4px;
+            }
+   
+    
+    
+</style>
+
+
+
+<script type="text/javascript">
+    var connection;
+    var username;
+    // Common emojis
+    const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇",
+        "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚",
+        "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩",
+        "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣",
+        "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬",
+        "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗",
+        "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯",
+        "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐",
+        "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈",
+        "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾",
+        "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿",
+        "😾", "❤️", "🧡", "💛", "💚", "💙", "💜", "🤎", "🖤", "🤍",
+        "💔", "❣️", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟",
+        "👍", "👎", "👌", "✌️", "🤞", "🤟", "🤘", "🤙", "👋", "🤚",
+        "🖐️", "✋", "🖖", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️"];
+
+    function setUsername() {
+        var usernameInput = document.getElementById("usernameInput");
+        var name = usernameInput.value.trim();
+
+        if (name) {
+            username = name;
+            document.getElementById("usernameSetup").style.display = "none";
+            document.getElementById("chatContainer").style.display = "block";
+
+            // Initialize WebSocket connection after username is set
+            initializeWebSocket();
+
+            addSystemMessage("Chat with your Friends: " + username);
+        } else {
+            alert("Please enter a valid username");
+        }
+    }
+
+
+    function initializeWebSocket() {
+        connection = new WebSocket("ws://" + window.location.host + "/ws");
+
+        connection.onopen = function () {
+            console.log("WebSocket connection established.");
+        };
+
+        connection.onmessage = function (event) {
+            try {
+                var data;
+                try {
+                    data = JSON.parse(event.data);
+                } catch (e) {
+                    // If parsing fails, check if it's a raw emoji message
+                    if (event.data.match(/[\u{1F600}-\u{1F6FF}]/gu)) {
+                        data = {
+                            sender: "User",
+                            text: event.data,
+                            time: new Date().toISOString()
+                        };
+                    } else {
+                        throw e;
+                    }
+                }
+
+                // Skip own messages
+                if (data.sender === username) return;
+
+                // Format the time properly
+                const messageTime = new Date(data.time || new Date());
+                const formattedTime = messageTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                addOtherUserMessage(data.sender, data.text, formattedTime);
+
+            } catch (e) {
+                console.error("Error handling message:", event.data, e);
+                // Display the raw message if parsing fails
+                addOtherUserMessage("User", event.data, new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            }
+        };
+
+        // ... (rest of your WebSocket handlers)
+    }
+
+    function sendMessage() {
+        var input = document.getElementById("messageInput");
+        var message = input.value.trim();
+
+        if (message && connection && connection.readyState === WebSocket.OPEN) {
+            var messageObj = {
+               sender: username,
+                text: message,
+                time: new Date().toISOString()
+            };
+
+            // Stringify with error handling
+            var messageString;
+            try {
+                messageString = JSON.stringify(messageObj);
+            } catch (e) {
+                console.error("Error stringifying message:", e);
+                messageString = username + ": " + message; // Fallback to plain text
+            }
+
+            connection.send(messageString);
+            addYourMessage(message);
+            input.value = '';
+        } else if (!message) {
+            alert("Please enter a message");
+        }
+    }
+
+    function toggleEmojiPicker() {
+        const picker = document.getElementById('emojiPicker');
+        if (picker.style.display === 'none') {
+            picker.style.display = 'grid';
+            if (picker.innerHTML === '') {
+                loadEmojis();
+            }
+        } else {
+            picker.style.display = 'none';
+        }
+    }
+
+    function loadEmojis() {
+        const picker = document.getElementById('emojiPicker');
+        emojis.forEach(emoji => {
+            const span = document.createElement('span');
+            span.textContent = emoji;
+            span.onclick = () => insertEmoji(emoji);
+            picker.appendChild(span);
+        });
+    }
+
+    function insertEmoji(emoji) {
+        const input = document.getElementById('messageInput');
+        const startPos = input.selectionStart;
+        const endPos = input.selectionEnd;
+
+        input.value = input.value.substring(0, startPos) + emoji + input.value.substring(endPos);
+        input.focus();
+        input.selectionStart = startPos + emoji.length;
+        input.selectionEnd = startPos + emoji.length;
+
+        // Hide the picker after selection
+        document.getElementById('emojiPicker').style.display = 'none';
+    }
+    function addYourMessage(text) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        addMessage(username, text, time, "your-message");
+    }
+
+    function addOtherUserMessage(sender, text, time) {
+        addMessage(sender, text, time, "other-message");
+    }
+
+    function addSystemMessage(text) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        addMessage("System", text, time, "system-message");
+    }
+
+    function addMessage(sender, text, time, messageType) {
+        var messagesList = document.getElementById("messagesList");
+        var li = document.createElement("li");
+        li.className = messageType;
+
+        var content = `
+                <span class="message-sender">${sender}:</span>
+                <div class="message-content">${text}</div>
+                <span class="message-time">${time}</span>
+            `;
+        li.innerHTML = content;
+
+        messagesList.appendChild(li);
+        messagesList.scrollTop = messagesList.scrollHeight;
+    }
+
+   
+
+    document.getElementById("messageInput").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") sendMessage();
+    });
+
+    document.getElementById("usernameInput").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") setUsername();
+    });
+
+    // Close emoji picker when clicking outside
+    document.addEventListener('click', function (event) {
+        const picker = document.getElementById('emojiPicker');
+        const trigger = document.querySelector('.emoji-trigger');
+
+        if (picker.style.display !== 'none' &&
+            !picker.contains(event.target) &&
+            !trigger.contains(event.target)) {
+            picker.style.display = 'none';
+        }
+    });
+</script>
+
+
+@* <script type="text/javascript">
+    var connection;
+    var username;
+
+    function setUsername() {
+        var usernameInput = document.getElementById("usernameInput");
+        var name = usernameInput.value.trim();
+
+        if (name) {
+            username = name;
+            document.getElementById("usernameSetup").style.display = "none";
+            document.getElementById("chatContainer").style.display = "block";
+
+            // Initialize WebSocket connection after username is set
+            initializeWebSocket();
+
+            addSystemMessage(" Chat with your Friends  : " + username);
+        } else {
+            alert("Please enter a valid username");
+        }
+    }
+
+    function initializeWebSocket() {
+        // Use ws:// instead of wss:// for development
+        connection = new WebSocket("ws://" + window.location.host + "/ws");
+
+        connection.onopen = function () {
+            console.log("WebSocket connection established.");
+        };
+
+        connection.onmessage = function (event) {
+            try {
+                var data = JSON.parse(event.data);
+                if (data.sender === username) return; // Skip own messages
+                addOtherUserMessage(data.sender, data.text);
+            } catch (e) {
+                console.error("Error parsing message:", e);
+                addSystemMessage("Received an invalid message");
+            }
+        };
+
+        connection.onclose = function () {
+            console.log("WebSocket is closed now.");
+            addSystemMessage("Connection closed. Refresh page to reconnect.");
+        };
+
+        connection.onerror = function (error) {
+            console.log("WebSocket error: " + error);
+            addSystemMessage("Connection error occurred");
+        };
+    }
+
+    function sendMessage() {
+        var input = document.getElementById("messageInput");
+        var message = input.value.trim();
+
+        if (message && connection && connection.readyState === WebSocket.OPEN) {
+            var messageObj = {
+                sender: username,
+                text: message,
+                time: new Date().toISOString()
+            };
+            addYourMessage(message);
+            connection.send(JSON.stringify(messageObj));
+            input.value = '';
+        } else if (!message) {
+            alert("Please enter a message");
+        }
+    }
+
+    function addYourMessage(text) {
+        addMessage(username, text, "your-message");
+    }
+
+    function addOtherUserMessage(sender, text) {
+        addMessage(sender, text, "other-message");
+    }
+
+    function addSystemMessage(text) {
+        addMessage("System", text, "system-message");
+    }
+
+    function addMessage(sender, text, messageType) {
+        var messagesList = document.getElementById("messagesList");
+        var li = document.createElement("li");
+        li.className = messageType;
+
+        var content = `
+                    <span class="message-sender">${sender}:</span>
+                    <div class="message-content">${text}</div>
+                    <span class="message-time">${new Date().toLocaleTimeString()}</span>
+                `;
+        li.innerHTML = content;
+
+        messagesList.appendChild(li);
+        messagesList.scrollTop = messagesList.scrollHeight;
+    }
+
+    document.getElementById("messageInput").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") sendMessage();
+    });
+
+    document.getElementById("usernameInput").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") setUsername();
+    });
+</script> *@
